@@ -6,19 +6,20 @@ var  AptList = require('./AptList');
 var  AddAppointment = require('./AddAppointment');
 
 var MainInterface = React.createClass({
-  getInitialState: function() {
-    return {
-      myAppointments: []
-    } //return
-  }, //getInitialState
+    getInitialState: function() {
+        return {
+            aptBodyVisible:  false,
+            myAppointments: []
+        } //return
+    }, //getInitialState
 
-  componentDidMount: function() {
+componentDidMount: function() {
     this.serverRequest = $.get('./js/data.json', function(result) {
-      var tempApts = result;
-      this.setState({
-        myAppointments: tempApts
-      }); //setState
-    }.bind(this));
+        var tempApts = result;
+        this.setState({
+            myAppointments: tempApts
+        }); //setState
+    }.bind(this)); //serverRequest
 }, //componentDidMount
 
   componentWillUnmount: function() {
@@ -33,6 +34,21 @@ var MainInterface = React.createClass({
       }); //setState
   }, //deleteMessage
 
+  toggleAptDisplay: function() {
+      var tempVisibility = !this.state.aptBodyVisible;
+      this.setState({
+          aptBodyVisible: tempVisibility
+      });
+  }, //toggleAptDisplay
+
+  addItem: function(tempItem) {
+      var tempApts = this.state.myAppointments;
+      tempApts.push(tempItem);
+      this.setState({
+          myAppointments: tempApts
+      }); //setState
+  }, //addItem
+
   render: function() {
     var filteredApts = this.state.myAppointments;
     filteredApts = filteredApts.map(function(item, index) {
@@ -45,7 +61,11 @@ var MainInterface = React.createClass({
     }.bind(this)); //filteredApts.map
     return (
       <div className="interface">
-        <AddAppointment/>
+        <AddAppointment
+            bodyVisible = { this.state.aptBodyVisible }
+            handleToggle = { this.toggleAptDisplay }
+            addApt = { this.addItem }
+        />
         <ul className="item-list media-list">{filteredApts}</ul>
       </div>
     ) //return
